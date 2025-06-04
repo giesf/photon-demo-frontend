@@ -17,9 +17,9 @@ function load(
             method: 'get',
             signal: controller.signal,
           }).then(res=>res.json().then(r=>{
-            const rr = r.features.map(r=>r.properties)
+            const rr = r.features.map(r=>({...r.properties, coordinates: r.geometry.coordinates}))
     
-            const rstr = Array.from( new Set(rr.map(l=>`<li data-original='${JSON.stringify(l)}'>${l.street && l.name ?  l.name+", ":""}${l.street ?? l.name ?? ""}${l.housenumber ?" "+l.housenumber: ""}, ${l.district ? l.district+", ":""}${l.postcode} ${l.city}, ${l.country}</li>`)))
+            const rstr = Array.from( new Set(rr.map(l=>`<li data-original='${JSON.stringify(l)}'><a href="map.html?x=${l.coordinates[0]}&y=${l.coordinates[1]}&z=15">${l.street && l.name ?  l.name+", ":""}${l.street ?? l.name ?? ""}${l.housenumber ?" "+l.housenumber: ""}, ${l.district ? l.district+", ":""}${l.postcode} ${l.city}, ${l.country}</a></li>`)))
             const end = new Date();
             const timeS = (end.valueOf()- start.valueOf() ) / 1000
             document.getElementById("time").innerHTML="Query Time: "+timeS.toFixed(3) + "sec"

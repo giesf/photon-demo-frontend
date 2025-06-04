@@ -1,0 +1,136 @@
+<html>
+    <head>
+        <title>PMTiles MapLibre Example</title>
+        <meta charset="utf-8"/>
+        <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.0/dist/maplibre-gl.css" crossorigin="anonymous">
+        <script src="https://unpkg.com/maplibre-gl@4.7.0/dist/maplibre-gl.js" crossorigin="anonymous"></script>
+        <script src="https://unpkg.com/pmtiles@4.3.0/dist/pmtiles.js"></script>
+        <style>
+            body {
+                margin: 0;
+            }
+            #map {
+                height:calc(100vh - 50px);
+                width:100%;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="map"></div>
+        Description from PMTiles metadata: <span id="description"></span>
+        <script type="text/javascript">
+            // Advanced MapLibre example demonstrating PMTiles JavaScript API + pmtiles:// protocol.
+
+            let protocol = new pmtiles.Protocol();
+            maplibregl.addProtocol("pmtiles", protocol.tile);
+
+            let PMTILES_URL = "https://photon-demo.x-z.dev/pmtiles/europe.pmtiles";
+
+            let source = new pmtiles.FetchSource(PMTILES_URL, new Headers({'Content-Language': 'xx'}));
+
+            const p = new pmtiles.PMTiles(source);
+
+            const url = new URL(location.href);
+            // this is so we share one instance across the JS code and the map renderer
+            protocol.add(p);
+
+            const marker = {
+                x: url.searchParams.get("x") ? parseFloat(url.searchParams.get("x") ): 13.3989367,
+                y:  url.searchParams.get("y") ? parseFloat(url.searchParams.get("y") ):52.510885,
+                z:  url.searchParams.get("z")  ? parseInt(url.searchParams.get("z") ):12
+            }
+            p.getMetadata().then((m) => {
+              document.getElementById("description").textContent = m.description;
+            })
+
+            // we first fetch the header so we can get the center lon, lat of the map.
+            p.getHeader().then((h) => {
+              const map = new maplibregl.Map({
+                container: "map",
+                zoom: marker.z,
+                hash:false,
+                center: [marker.x,marker.y],
+                style: {
+                  version: 8,
+                  sources: {
+                    example_source: {
+                      type: "vector",
+                      // For standard Z/X/Y tile APIs or Z/X/Y URLs served from go-pmtiles, replace "url" with "tiles" and remove all the pmtiles-related client code.
+                      // tiles: ["https://example.com/{z}/[x}/{y}.mvt"],
+                      // see https://maplibre.org/maplibre-style-spec/sources/#vector
+                      url: "pmtiles://" + PMTILES_URL,
+                      attribution:
+                        '© <a href="https://openstreetmap.org">OpenStreetMap</a>',
+                    },
+                  },
+                  layers: [
+                    {
+                      id: "landuse",
+                      source: "example_source",
+                      "source-layer": "landuse",
+                      type: "fill",
+                      paint: {
+                        "fill-color": "#efefef",
+                      },
+                    }, {
+                      id: "water",
+                      source: "example_source",
+                      "source-layer": "water",
+                      filter: ["==",["geometry-type"],"Polygon"],
+                      type: "fill",
+                      paint: {
+                        "fill-color": "#80b1d3",
+                      },
+                    },
+                    {
+                      id: "building",
+                      source: "example_source",
+                      "source-layer": "building",
+                      type: "fill",
+                      paint: {
+                        "fill-color": "#cccccc",
+                      },
+                    },
+                    {
+                      id: "transportation",
+                      source: "example_source",
+                      "source-layer": "transportation",
+                      type: "line",
+                      paint: {
+                        "line-color": "#fc8d62",
+                      },
+                    },
+                    {
+                      id: "transportation_name",
+                      source: "example_source",
+                      "source-layer": "transportation_name",
+                      type: "line",
+                      paint: {
+                        "line-color": "#a82f00",
+                      },
+                    },
+                    // {
+                    //   id: "transportation_name",
+                    //   source: "example_source",
+                    //   "source-layer": "transportation_name",
+                    //   type: "symbol",
+                    //   paint: {
+                    //     "text-color": "#a82f00",
+                    //     "text-halo-color": "#000000",
+                    //     "text-halo-width": 1,
+                    //   },
+                    // },
+                    
+                  ],
+                },
+              });
+              map.showTileBoundaries = false;
+
+
+           const vmark = new maplibregl.Marker()
+                .setLngLat([marker.x, marker.y])
+                .addTo(map);
+            });
+        </script>
+    </body>
+</html>

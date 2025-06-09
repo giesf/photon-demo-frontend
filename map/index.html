@@ -1,0 +1,43 @@
+<html>
+
+<head>
+  <title>PMTiles Map</title>
+  <meta charset="utf-8" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.0/dist/maplibre-gl.css" crossorigin="anonymous">
+  <script src="https://unpkg.com/maplibre-gl@4.7.0/dist/maplibre-gl.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/pmtiles@4.3.0/dist/pmtiles.js"></script>
+  <script src="https://unpkg.com/@protomaps/basemaps@5.4.0/dist/basemaps.js"></script>
+  <link rel="stylesheet" href="../style.css">
+
+  <style>
+    body {
+      margin: 0;
+    }
+
+    #map {
+      height: calc(100vh - 20px);
+      width: 100%;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="search" style="padding: 1rem; position:fixed; top: 0;left:0; width: 100%;z-index:400">
+    <input type="search" id="search" />
+    <ul id="search-results" style="background-color: var(--pico-background-color);">
+
+    </ul>
+  </div>
+  <div id="map"></div>
+  Description from PMTiles metadata: <span id="description"></span>
+  <script src="/map/map-viewer.js">
+  </script>
+  <script src="/map/search.js">
+  </script>
+</body>
+
+</html>

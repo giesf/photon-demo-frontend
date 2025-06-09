@@ -35,7 +35,7 @@ p.getHeader().then((h) => {
             sources: {
                 transportation: {
                     type: "vector",
-                    url: "pmtiles://https://overturemaps-tiles-us-west-2-beta.s3.amazonaws.com/2025-05-21/base.pmtiles",
+                    url: "pmtiles://https://photon-demo.x-z.dev/pmtiles/base.pmtiles",
                 },
                 worldtiles: {
                     type: "vector",
